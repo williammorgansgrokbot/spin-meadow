@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#3a1d08">
+<title>Spin Meadow</title>
+<style>/*CSS*/</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="gl"></canvas>
+  <div id="hud">
+    <div id="topLeft">
+      <div class="panel"><small>Course</small><b id="courseNum">1-1</b></div>
+      <div class="panel"><small>Pennies</small><b id="pennyNum">0</b></div>
+      <div class="panel" id="heartPanel"><small>Light</small><b id="heartNum">1</b></div>
+    </div>
+    <div id="topRight">
+      <button id="btnPause" class="roundBtn" aria-label="Pause" type="button"></button>
+      <button id="btnMute" class="roundBtn" aria-label="Sound" type="button"></button>
+    </div>
+    <div id="banner" aria-hidden="true"></div>
+    <div id="touch">
+      <div id="stickZone" aria-hidden="true"></div>
+      <div id="pad"><div id="padKnob"></div></div>
+      <button id="runBtn" class="tbtn" type="button" aria-label="Run">RUN</button>
+      <button id="jumpBtn" class="tbtn" type="button" aria-label="Jump">JUMP</button>
+      <button id="sparkBtn" class="tbtn hidden" type="button" aria-label="Spark">SPARK</button>
+    </div>
+  </div>
+
+  <section id="title" class="screen show">
+    <img id="titleBg" alt="">
+    <div class="titleInner">
+      <button id="btnPlay" class="pill go" type="button">Play</button>
+      <div class="perks">
+        <span>Three short courses</span>
+        <span>A spinning little planet</span>
+        <span>Plays on iPhone</span>
+        <span>Original painted world</span>
+      </div>
+    </div>
+    <button id="btnMuteTitle" class="roundBtn muteTop" aria-label="Sound" type="button"></button>
+  </section>
+
+  <section id="pause" class="screen">
+    <div class="modal">
+      <h2>Paused</h2>
+      <p class="sub">The meadow will wait.</p>
+      <button id="pResume" class="pill go" type="button">Resume</button>
+      <button id="pRestart" class="pill" type="button">Restart course</button>
+      <button id="pQuit" class="pill" type="button">Title</button>
+    </div>
+  </section>
+
+  <section id="clear" class="screen">
+    <div class="modal">
+      <h2 id="clearTitle">Beacon lit!</h2>
+      <p class="sub" id="clearSub">The rim turns onward.</p>
+      <div class="stats">
+        <div><small>Pennies</small><b id="clearPennies">0</b></div>
+        <div><small>Course</small><b id="clearCourse">1-1</b></div>
+      </div>
+      <button id="cNext" class="pill go" type="button">Next course</button>
+      <button id="cTitle" class="pill" type="button">Title</button>
+    </div>
+  </section>
+
+  <section id="lose" class="screen">
+    <div class="modal">
+      <h2>A stumble in the grass</h2>
+      <p class="sub" id="loseSub">The lantern flickered out.</p>
+      <button id="lAgain" class="pill go" type="button">Try again</button>
+      <button id="lTitle" class="pill" type="button">Title</button>
+    </div>
+  </section>
+
+  <section id="loading" class="screen show"><div class="loadTxt">Spin Meadow</div></section>
+  <div id="rotate"><div class="rotBox">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="20" y="6" width="24" height="44" rx="5"/><path d="M8 40c8 12 40 12 48 0" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+    <p>Turn your phone sideways</p>
+    <span>Spin Meadow plays in landscape.</span>
+  </div></div>
+</div>
+<script>/*SCRIPT*/</script>
+</body>
+</html>

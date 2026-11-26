@@ -1,19 +1,25 @@
 # Spin Meadow
 
-An original 3D platformer: tight run-and-jump around a rotating disc wrapped on a half-planet. The hero is Wren, a lantern-keeper. World 1 is The Sunny Rim.
+An original 3D platformer: tight run-and-jump around a rotating disc wrapped on a half-planet. The hero is Wren, a lantern-keeper. World 1 is The Sunny Rim — three short courses that end at a beacon mast.
 
-This repository is private and unpublished. It holds art previews only — there is no playable build and GitHub Pages is not enabled.
+This repository is **private and unpublished**. GitHub Pages is not enabled. There is no public URL.
 
-## Art previews
+## Play it privately
 
-Painted, non-procedural concept boards (PNG/JPEG, no WebP):
+The game is one standalone file, `index.html` (Three.js r160, all art and code inlined). Download that file from this private repo and open it on your iPhone (Safari or the Files app) or on a computer. No server is required. Keyboard, touch, and a standard gamepad all work.
 
-- `previews/01-wren-character-sheet.jpg` — Wren idle, run, and jump
-- `previews/02-spin-meadow-key-art.jpg` — the half-planet and rotating cube ring
-- `previews/03-enemy-concepts.jpg` — pebble mite and seed-pod
-- `previews/04-item-sheet.jpg` — sun penny, terracotta tile, sun-mark block, Sunseed, Spark Orb, beacon mast
-- `previews/05-spin-meadow-title.jpg` — title treatment
+- Move: WASD or arrows, or the left stick
+- Jump: Space, or JUMP
+- Run: Shift, or RUN
+- Spark (after a Spark Orb): J / K, or SPARK
+- Pause: P or Esc · Mute: M
 
-Source paintings live in `art_src/`. `tools/process.py` writes optimized JPEG copies to `art/` and `previews/`, and includes the green-key helper used on Bill's other games for later sprite cutouts.
+## World 1
 
-All characters, names, and art are original. Nothing here copies Nintendo property.
+1-1 Morning Path, 1-2 Chimney Rise, 1-3 Beacon Meadow. Sun pennies, terracotta tiles, sun-mark blocks, a Sunseed (extra hit), a Spark Orb, pebble mites, seed-pods, clay chimneys with snap-fronds, and a beacon-mast finish.
+
+## Build
+
+Painted art lives in `art_src/` and is keyed or optimized into `art/` by `tools/process.py`. `python3 tools/build.py` writes the standalone `index.html`. Playwright checks: `python3 tools/qa.py` (844×390, 932×430, 667×375).
+
+All characters, names, art, music, and layouts are original. Nothing here copies Nintendo property.
