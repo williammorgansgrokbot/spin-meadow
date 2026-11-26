@@ -2,11 +2,9 @@
 
 An original 3D platformer: tight run-and-jump around a rotating disc wrapped on a half-planet. The hero is Wren, a lantern-keeper. World 1 is The Sunny Rim — three short courses that end at a beacon mast.
 
-This repository is **private and unpublished**. GitHub Pages is not enabled. There is no public URL.
+**Play:** https://williammorgansgrokbot.github.io/spin-meadow/
 
-## Play it privately
-
-The game is one standalone file, `index.html` (Three.js r160, all art and code inlined). Download that file from this private repo and open it on your iPhone (Safari or the Files app) or on a computer. No server is required. Keyboard, touch, and a standard gamepad all work.
+The game is one standalone file, `index.html` (Three.js r160, all art and code inlined). You can also download that file and open it on an iPhone (Safari or the Files app) or on a computer. No server is required. Keyboard, touch, and a standard gamepad all work.
 
 - Move: WASD or arrows, or the left stick
 - Jump: Space, or JUMP
