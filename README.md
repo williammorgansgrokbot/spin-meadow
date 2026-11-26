@@ -20,6 +20,6 @@ The game is one standalone file, `index.html` (Three.js r160, all art and code i
 
 ## Build
 
-Painted art lives in `art_src/` and is keyed or optimized into `art/` by `tools/process.py`. `python3 tools/build.py` writes the standalone `index.html`. Playwright checks: `python3 tools/qa.py` (844×390, 932×430, 667×375).
+Painted art lives in `art_src/` and is keyed or optimized into `art/` by `tools/process.py`. `python3 tools/build.py` writes the standalone `index.html`. Playwright checks: `python3 tools/qa.py` (844×390, 932×430, 667×375), including hold-right and hold-left spin-direction assertions on all three courses.
 
 All characters, names, art, music, and layouts are original. Nothing here copies Nintendo property.

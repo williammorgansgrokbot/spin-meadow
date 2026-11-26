@@ -13,6 +13,9 @@ const Game = {
   world: null,
   planet: null,
   camLead: 0,
+  camY: 1,
+  qa: false,
+  qaSpeed: 0,
   fx: [],
   bolts: [],
   ready: false
@@ -198,7 +201,7 @@ function overlap(s0, s1, y0, y1, sol) {
 function movePlayer(dt) {
   const P = Player;
   const running = Input.run && P.on;
-  const max = running ? RUN_MAX : WALK_MAX;
+  const max = (Game.qa && Game.qaSpeed) ? Game.qaSpeed : (running ? RUN_MAX : WALK_MAX);
   const acc = P.on ? ACCEL : AIR_ACCEL;
   const wish = Input.x;
   if (wish !== 0) {
@@ -477,7 +480,9 @@ function updateAnims(dt) {
 }
 
 function updateCamera(dt) {
-  worldGroup.rotation.z = -Player.s / R;
+  // +s/R (CCW) brings the point at arc-length s to the top of the ring.
+  // A minus sign here doubles the displacement and Wren slides off to the right.
+  worldGroup.rotation.z = Player.s / R;
   placeNode(Player.node, Player.s, Player.y, 0.25);
   Game.L.enemies.forEach((e) => { if (e.mesh) placeNode(e.mesh, e.s, e.y, 0.2); });
   Game.L.items.forEach((it) => { if (it.mesh && !it.got) placeNode(it.mesh, it.s, it.y, 0.25); });
@@ -487,11 +492,19 @@ function updateCamera(dt) {
   });
   if (Game.L.beaconMesh) placeNode(Game.L.beaconMesh, Game.L.beacon, 1, 0.3);
 
-  const want = Player.face * 3.2;
-  Game.camLead = lerp(Game.camLead, want, 1 - Math.exp(-4 * dt));
-  // Keep Wren left-of-center so the path ahead fills the frame
-  const target = new THREE.Vector3(Game.camLead + 0.2, R + 1.45, 0);
-  camera.position.set(Game.camLead - 2.6, R + 2.7, 11.2);
+  worldGroup.updateMatrixWorld(true);
+  const wpos = new THREE.Vector3();
+  Player.node.getWorldPosition(wpos);
+
+  const want = Player.face * 2.2;
+  Game.camLead = lerp(Game.camLead, want, 1 - Math.exp(-5 * dt));
+  Game.camY = lerp(Game.camY, Player.y, 1 - Math.exp(-7 * dt));
+
+  // Follow Wren's world position (and jump height) so he stays near mid-screen.
+  const lookX = wpos.x + Game.camLead * 0.3;
+  const lookY = Math.max(R + 0.2, (R + Game.camY) + 0.55);
+  const target = new THREE.Vector3(lookX, lookY, 0);
+  camera.position.set(lookX - Player.face * 0.35, lookY + 1.55, 13.6);
   camera.up.set(0, 1, 0);
   camera.lookAt(target);
 }
@@ -510,9 +523,9 @@ function tick(dt) {
   updateItems(dt);
   collectPennies();
   // beacon
-  if (Math.abs(Player.s - Game.L.beacon) < 0.7 && Player.y < 3.4) winCourse();
+  if (!Game.qa && Math.abs(Player.s - Game.L.beacon) < 0.7 && Player.y < 3.4) winCourse();
   if (Player.y < -3.5) fail('Wren slipped off the rim.');
-  if (Player.s < 0.2) { Player.s = 0.2; Player.vs = Math.max(0, Player.vs); }
+  if (!Game.qa && Player.s < 0.2) { Player.s = 0.2; Player.vs = Math.max(0, Player.vs); }
 }
 
 function loop(tms) {
@@ -553,6 +566,7 @@ function startCourse(index, keepPennies) {
   buildCourse(index);
   Player.s = Game.L.spawn; Player.y = 1.02; Player.vs = 0; Player.vy = 0; Player.on = true; Player.face = 1;
   Player.anim = 'idle'; Player.jumping = false;
+  Game.camLead = 0; Game.camY = 1; Game.qa = false; Game.qaSpeed = 0;
   Game.mode = 'play';
   document.body.classList.add('inplay');
   UI.hud();
@@ -593,7 +607,7 @@ async function boot() {
   renderer.setClearColor(0x87b7e0, 1);
   renderer.outputColorSpace = THREE.SRGBColorSpace || renderer.outputColorSpace;
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(42, 16 / 9, 0.1, 200);
+  camera = new THREE.PerspectiveCamera(46, 16 / 9, 0.1, 200);
 
   const names = {
     grass: 'tex_grass.jpg', dirt: 'tex_dirt.jpg', terracotta: 'tex_terracotta.jpg',
@@ -616,30 +630,55 @@ async function boot() {
 
   skyTex = TEX.sky; scene.background = skyTex;
 
-  const hemi = new THREE.HemisphereLight(0xfff0d0, 0x4a3a22, 0.85);
+  const hemi = new THREE.HemisphereLight(0xfff4dc, 0x6a4a28, 1.05);
   scene.add(hemi);
-  const sun = new THREE.DirectionalLight(0xffe2a8, 0.8);
-  sun.position.set(8, 18, 10); scene.add(sun);
-  const coreLight = new THREE.PointLight(0xffb24a, 1.6, 40, 1.4);
-  coreLight.position.set(0, 0, 0); scene.add(coreLight);
+  const sun = new THREE.DirectionalLight(0xffe8c0, 1.15);
+  sun.position.set(4, 10, 16); scene.add(sun);
+  const coreLight = new THREE.PointLight(0xffc060, 2.4, 48, 1.15);
+  coreLight.position.set(0, 4, 8); scene.add(coreLight);
 
-  // half-planet at the origin: a sphere body plus the glowing core disc facing the camera
-  const PR = R - 3.6;
+  // Half-planet in the hole of the ring. The cut face is lifted so its
+  // glowing center sits in the lower frame instead of a dark outer rim.
+  const PR = R - 1.15;
   const glob = new THREE.Mesh(
-    new THREE.SphereGeometry(PR, 40, 28, 0, Math.PI * 2, 0, Math.PI / 2),
-    new THREE.MeshLambertMaterial({ map: TEX.planet, emissive: 0x331800, emissiveIntensity: 0.35 })
+    new THREE.SphereGeometry(PR, 48, 32, 0, Math.PI * 2, 0, Math.PI / 2),
+    new THREE.MeshLambertMaterial({
+      map: TEX.planet,
+      color: 0xfff0d8,
+      emissive: 0xff7a28,
+      emissiveMap: TEX.planet,
+      emissiveIntensity: 0.55,
+      side: THREE.FrontSide
+    })
   );
-  glob.rotation.x = -Math.PI / 2; // cut face toward +Z (the camera)
+  glob.rotation.x = Math.PI / 2;
+  glob.scale.z = 0.34;
   scene.add(glob);
   Game.planet = glob;
+  // Cut-face of the half-planet, sitting in the hole under the path
+  // (top of the disc stays below Wren's feet at y = R + 1).
+  const faceR = 5.15;
+  const faceY = 20.4;
+  const rim = new THREE.Mesh(
+    new THREE.CircleGeometry(faceR + 0.18, 64),
+    new THREE.MeshBasicMaterial({ color: 0x6a4a28, toneMapped: false })
+  );
+  rim.position.set(0, faceY, 2.2);
+  scene.add(rim);
   const disc = new THREE.Mesh(
-    new THREE.CircleGeometry(PR * 0.98, 48),
+    new THREE.CircleGeometry(faceR, 64),
     new THREE.MeshBasicMaterial({ map: TEX.planet, toneMapped: false })
   );
-  disc.position.z = 0.08;
+  disc.position.set(0, faceY, 2.35);
   scene.add(disc);
-  const glow = new THREE.PointLight(0xffc060, 1.4, 28, 1.2);
-  glow.position.set(0, 0, 2);
+  const core = new THREE.Mesh(
+    new THREE.CircleGeometry(1.8, 32),
+    new THREE.MeshBasicMaterial({ color: 0xfff3c0, transparent: true, opacity: 0.4, toneMapped: false })
+  );
+  core.position.set(0, faceY, 2.5);
+  scene.add(core);
+  const glow = new THREE.PointLight(0xffd080, 1.8, 32, 1.1);
+  glow.position.set(0, 18, 7);
   scene.add(glow);
 
   $('titleBg').src = AS['title.jpg'];
@@ -656,9 +695,48 @@ async function boot() {
     start: (i) => startCourse(i || 0, false),
     next: () => startCourse(Math.min(Game.course + 1, 2), true),
     win: winCourse,
-    state: () => ({ mode: Game.mode, course: Game.course, s: Player.s, y: Player.y, pennies: Game.pennies, hp: Game.hp }),
+    state: () => ({ mode: Game.mode, course: Game.course, s: Player.s, y: Player.y, vs: Player.vs, on: Player.on, pennies: Game.pennies, hp: Game.hp, rot: worldGroup ? worldGroup.rotation.z : 0 }),
     input: Input,
-    hold: (opts) => { opts = opts || {}; const I = Input; if (opts.x != null) I.x = opts.x; if (opts.run) I.run = true; if (opts.jump) { I.jumpEdge = true; I.jump = true; } }
+    hold: (opts) => { opts = opts || {}; const I = Input; if (opts.x != null) I.x = opts.x; if (opts.run) I.run = true; if (opts.jump) { I.jumpEdge = true; I.jump = true; } },
+    qa: (on, opts) => {
+      opts = opts || {};
+      Game.qa = !!on;
+      Game.qaSpeed = (on && opts.speed) ? opts.speed : 0;
+      if (Game.qa) {
+        Game.invuln = 999;
+        if (opts.hideEnemies && Game.L && Game.L.enemies) {
+          Game.L.enemies.forEach((e) => { e.alive = false; if (e.mesh) e.mesh.visible = false; });
+        }
+      }
+    },
+    invuln: (on) => { Game.invuln = on ? 999 : 0; },
+    place: (s, y) => {
+      Player.s = s;
+      Player.y = (y == null ? 1.02 : y);
+      Player.vs = 0; Player.vy = 0; Player.on = true;
+      Game.camLead = 0; Game.camY = Player.y;
+      if (worldGroup) {
+        worldGroup.rotation.z = Player.s / R;
+        placeNode(Player.node, Player.s, Player.y, 0.25);
+        worldGroup.updateMatrixWorld(true);
+      }
+    },
+    probe: () => {
+      const wpos = new THREE.Vector3();
+      if (Player.node) Player.node.getWorldPosition(wpos);
+      const ndc = wpos.clone().project(camera);
+      const w = renderer.domElement.clientWidth, h = renderer.domElement.clientHeight;
+      return {
+        mode: Game.mode, course: Game.course,
+        s: Player.s, y: Player.y, vs: Player.vs, vy: Player.vy, on: !!Player.on,
+        worldRotZ: worldGroup ? worldGroup.rotation.z : 0,
+        expectedRotZ: Player.s / R,
+        world: { x: wpos.x, y: wpos.y, z: wpos.z },
+        sx: ndc.x * 0.5 + 0.5,
+        sy: -ndc.y * 0.5 + 0.5,
+        vw: w, vh: h
+      };
+    }
   };
   if (/[?&]demo=1/.test(location.search)) startCourse(0, false);
 }

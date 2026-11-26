@@ -30,16 +30,16 @@ function course11() {
   deco(L, 'flowers', 4, 1); deco(L, 'tree_a', 8.5, 1); deco(L, 'bush', 14.2, 1);
   // easy gap
   ground(L, 18.3, 36, 1);
-  plat(L, 22.5, 3, 3);
-  block(L, 24, 3.5, 'sun', 'penny');
-  pennies(L, 22.8, 3, 4.4, 1.15);
+  plat(L, 22.5, 3, 3.7);
+  block(L, 24, 4.2, 'sun', 'penny');
+  pennies(L, 22.8, 3, 5.1, 1.15);
   enemy(L, 'mite', 27, 33.5, 1);
   chimney(L, 30.6, false, false, 0);
   deco(L, 'flowers', 20, 1); deco(L, 'cairn', 34.4, 1);
   // run-friendly gap
   ground(L, 39.2, 62, 1);
-  plat(L, 44, 4.2, 3);
-  pennies(L, 44.4, 4, 4.3, 1.1);
+  plat(L, 44, 4.2, 3.7);
+  pennies(L, 44.4, 4, 5.0, 1.1);
   deco(L, 'tree_b', 42, 1); deco(L, 'frond_deco', 50, 1);
   enemy(L, 'mite', 51, 58, 1);
   deco(L, 'flowers', 59, 1);
@@ -67,8 +67,8 @@ function course12() {
   chimney(L, 26.6, true, false, 35.4);
   ground(L, 33.6, 48, 1);
   chimney(L, 35.4, false, false, 0);
-  plat(L, 38, 3.2, 3.2);
-  pennies(L, 38.3, 3, 4.4, 1.1);
+  plat(L, 38, 3.2, 3.7);
+  pennies(L, 38.3, 3, 5.0, 1.1);
   enemy(L, 'mite', 40, 46.5, 1);
   deco(L, 'flowers', 37, 1); deco(L, 'tree_b', 47, 1);
   // tighter gap, then a tile stair
@@ -76,8 +76,8 @@ function course12() {
   block(L, 54, 1.5, 'tile', null);
   block(L, 55, 1.5, 'tile', 'penny');
   block(L, 55, 2.5, 'tile', null);
-  block(L, 58.5, 3.5, 'sun', 'penny');
-  plat(L, 57.5, 3, 3);
+  block(L, 58.5, 4.2, 'sun', 'penny');
+  plat(L, 57.5, 3, 3.7);
   pennies(L, 61, 3, 2.3, 1.3);
   chimney(L, 65, true, true, 0);
   enemy(L, 'pod', 62, 64.4, 1);
@@ -103,8 +103,8 @@ function course13() {
   enemy(L, 'mite', 28.5, 34, 1);
   enemy(L, 'pod', 36, 42, 1);
   chimney(L, 32.2, true, true, 0);
-  plat(L, 38, 3, 3.1);
-  block(L, 39.5, 3.6, 'sun', 'penny');
+  plat(L, 38, 3, 3.7);
+  block(L, 39.5, 4.2, 'sun', 'penny');
   deco(L, 'bush', 27.6, 1); deco(L, 'frond_deco', 43, 1);
   // run gap then a high path
   plat(L, 46.2, 2.2, 2.6);
